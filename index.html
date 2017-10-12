@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="de">
+	<head>
+		<title>Bubblesort</title>
+		<meta charset="utf-8">
+		<meta name="generator" content="Bluefish 2.2.5" >
+		<meta name="author" content="Clemens" >
+		<meta name="date" content="2017-10-12T14:27:56+0200" >
+		<meta name="copyright" content="Clemens Riese https://milchinsel.de" >
+		
+		<script type="text/javascript">
+			
+			counter = 0;
+			marked = 0;
+			
+			function getArray(ignore = 0) {
+				var array = [];
+				if (counter > 0) {
+					var arrayItem = 0;
+					for (var i = 1; i <= counter; i++) {
+						if (ignore != i) {
+							array[arrayItem] = parseInt(document.getElementById('item-' + i).value);
+							arrayItem = arrayItem + 1;
+						}
+					}
+				}
+				
+				return array;
+			}
+			
+			function showMenu(items) {
+				var output = '';
+				for (var i=0; i<items.length; i++) {
+					output = output + '<input type="number" id="item-' + (i+1) + '" value="' + items[i] + '"> <button onclick="remove(' + (i+1) + ')"> - </button>';
+					if (items[i] == marked) {
+						output = output + '<button onclick="mark(' + items[i] + ')" class="highlite"><b> * </b></button>';
+					}
+					else {
+						output = output + '<button onclick="mark(' + items[i] + ')"> * </button>';
+					}
+					output = output + '<br>';
+				}
+				if (counter > 10) {
+					output = output + '<small class="highlite">Größere Listen beanspruchen beim sortieren mehr Leistung und können deshalb in der Verarbeitung länger dauern.</small>';
+				}
+				document.getElementById('items').innerHTML = output;
+			}
+			
+			function add() {
+				var items = getArray();
+				counter = counter + 1;
+				items[counter-1] = '';
+				
+				showMenu(items);
+			}
+			
+			function remove(item) {
+				var items = getArray(item);
+				counter = counter - 1;
+				
+				showMenu(items);
+			}
+			
+			function mark(item) {
+				marked = item;
+				showMenu(getArray());
+			}
+			
+			function randArray(maxItems, maxValue) {
+				var items = [];
+				for (var i=0; i < Math.floor((Math.random() * 10) + 1); i++) {
+					items[i] = Math.floor((Math.random() * 100) + 1);
+				}
+				return items;
+			}
+			
+			function random() {
+				var items = [];
+				var output = '';
+				while (items.length < 5) {
+					var items = randArray();
+				}
+				counter = items.length;
+				
+				showMenu(items);
+			}
+			
+			function bubblesort() {
+				var array = getArray();
+				var n = array.length;
+				var getauscht = true;
+				var swapped = false;
+				var zwischenspeicher = 0;
+				
+				printAddCaption(array);
+				
+				while (n > 1 && getauscht) {
+					getauscht = false;
+					
+					for (var i=0; i < n-1; i++) {
+						swopped = false;
+						if (array[i] > array[i+1]) {
+							zwischenspeicher = array[i];
+							array[i] = array[i+1];
+							array[i+1] = zwischenspeicher;
+							
+							getauscht = true;
+							swopped = true;
+							
+						}
+						
+						printAdd(array, i, swopped);
+					}
+					
+					n = n - 1;
+				}
+				printAddCaption(array);
+				printOut();
+			}
+			
+			var printarray = '';
+			
+			function printAddCaption(array) {
+				var output = '';
+				output = output + '<tr>';
+				for (var i=0; i < array.length; i++) {
+					
+					output = output + '<th class="';
+					if (array[i] == marked) {
+						output = output + 'highlite ';
+						
+					}
+					output = output + '">';
+
+					output = output + array[i];
+					
+					output = output + '</th>';
+				}
+				output = output + '</tr>';
+				printarray = printarray + output;
+			}
+			
+			function printAdd(array, active, swapped) {
+				var output = '';
+				output = output + '<tr>';
+				for (var i=0; i < array.length; i++) {
+					
+					output = output + '<td class="';
+					if (i == active || i == active+1) {
+						output = output + 'active ';
+						
+					}
+					if (array[i] == marked) {
+						output = output + 'highlite ';
+						
+					}
+					output = output + '">';
+					
+					if ((i == active || i == active+1) && swapped) {
+						output = output + '<b>';
+					}
+					output = output + array[i];
+					if ((i == active || i == active+1) && swapped) {
+						output = output + '</b>';
+					}
+					
+					output = output + '</td>';
+				}
+				output = output + '</tr>';
+				printarray = printarray + output;
+			}
+			
+			function printOut() {
+				var output = '';
+				output = output + '<table>';
+				output = output + printarray;
+				output = output + '</table>';
+				document.getElementById('output').innerHTML = output;
+				printarray = '';
+			}
+		</script>
+		<style type="text/css">
+		table {
+			width:100%;
+			text-align: center;
+		}
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+		}
+		
+		table tr td.active {
+			background-color: lightgray;
+		}
+		table tr th {
+			background-color: gray;
+		}
+		
+		.highlite {
+			color: red;
+		}
+
+		</style>
+	</head>
+	<body>
+		<header>
+			<h1>Bubblesort</h1>
+		</header>
+		<section>
+			<fieldset>
+			<legend>Anleitung:</legend>
+			<p>Sortieren von Zahlen mittels Bubblesort <small><a href="https://de.m.wikipedia.org/wiki/Bubblesort">(WIKIPEDIA)</a></small>.</p>
+			<ul>
+				<li><b>+</b> Listenelement hinzufügen</li>
+				<li><b>-</b> Listenelement entfernen</li>
+				<li><b>*</b> Element markieren <br><small>(wird bei der Sortierausgabe <span class="highlite">rot</span> hervorgehoben)</small></li>
+				<li><b>Random</b> zufällige Liste</li>
+				<li><b>Sortieren</b> Liste sortieren lassen</li>
+			</ul>
+			</fieldset>
+			<br>
+			<fieldset>
+				<legend>Eingabe:</legend>
+				<div id="items"></div>
+				<hr>
+				<button onclick="add();"> + </button> <button onclick="random();"> Random </button>
+			</fieldset>
+			<br>
+			<fieldset>
+				<legend>Ausgabe:</legend>
+				<button onclick="bubblesort();"> Sortieren </button>
+				<hr>
+				<div id="output">
+				</div>
+			</fieldset>
+		</section>
+		<footer>
+			<p>&copy; 2017 <a href="https://milchinsel.de">milchinsel.de</a> Clemens Riese</p>
+		</footer>
+	</body>
+</html>
